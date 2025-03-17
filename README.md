@@ -1,11 +1,10 @@
 # Line Bot Plugin Integration Guide
 Author: @kevintsai1202 (https://github.com/kevintsai1202/difyplugin.git)
-Version: 0.0.2
+Version: 0.0.3
 Type: extension
 
 ## What's Changed
-1. Replace the logo with a high-resolution image.
-2. Add a conversation ID to enable the memory function.
+  Bug fixed
 
 ## Plugin Overview
 The Line Bot plugin integrates the Dify chat workflow application with the Line Official Account Messaging API. It enables users to interact with AI through a Line Official Account. The plugin only processes message reception and responses; it does not store any user information.
