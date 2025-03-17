@@ -1,5 +1,5 @@
 # Line Bot Plugin Integration Guide
-Author: @kevintsai1202 (https://github.com/kevintsai1202)
+Author: @kevintsai1202 (https://github.com/kevintsai1202/difyplugin.git)
 Version: 0.0.2
 Type: extension
 
