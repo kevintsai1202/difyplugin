@@ -10,7 +10,6 @@ import hashlib
 import base64
 
 class LineEndpoint(Endpoint):
-
     def _invoke(self, request: Request, values: Mapping, settings: Mapping) -> Response:
         """
         Invokes the endpoint with the given request.
@@ -52,8 +51,18 @@ class LineEndpoint(Endpoint):
             # Line 傳來的 Message
             user_id = event.source.user_id
             user_message = event.message.text
+            # print("user_id:"+user_id)
+            # print("user_message:"+user_message)
             try:
-                conversation_id = self.session.storage.get(user_id)          
+                key_to_check = lineChannelSecret+"_"+user_id
+                conversation_id = None
+                conversation_id = self.session.storage.get(key_to_check)
+                # print("conversation_id:"+conversation_id.decode('utf-8'))
+            except Exception as e:    
+                err = traceback.format_exc()
+                # print(err)
+
+            try:                
                 invoke_params = {
                     "app_id" : settings["app"]["app_id"],
                     "query" : user_message,
@@ -66,8 +75,9 @@ class LineEndpoint(Endpoint):
                 response = self.session.app.chat.invoke(**invoke_params)
                 answer = response.get("answer")
                 conversation_id = response.get("conversation_id")
-                if conversation_id is not None:
-                    self.session.storage.set(user_id, conversation_id.encode('utf-8'))
+                # print("conversation_id:"+conversation_id)
+                if conversation_id:
+                    self.session.storage.set(lineChannelSecret+"_"+user_id, conversation_id.encode('utf-8'))
                 line_bot_api.reply_message(
                     event.reply_token,
                     TextSendMessage(text=answer)
@@ -81,6 +91,7 @@ class LineEndpoint(Endpoint):
 
             except Exception as e:
                 err = traceback.format_exc()
+                # print(err)
                 return Response(
                     status=500,
                     response=err,
