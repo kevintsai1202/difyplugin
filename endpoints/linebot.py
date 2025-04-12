@@ -51,11 +51,11 @@ class LineEndpoint(Endpoint):
             # Line 傳來的 Message
             user_id = event.source.user_id
             user_message = event.message.text
+            key_to_check = lineChannelSecret+"_"+user_id
+            conversation_id = None
             # print("user_id:"+user_id)
             # print("user_message:"+user_message)
             try:
-                key_to_check = lineChannelSecret+"_"+user_id
-                conversation_id = None
                 conversation_id = self.session.storage.get(key_to_check)
                 # print("conversation_id:"+conversation_id.decode('utf-8'))
             except Exception as e:    
@@ -75,7 +75,7 @@ class LineEndpoint(Endpoint):
                     # Check for command in user message
                     if user_message.lower() == '/clearconversationhistory':
                         # Clear user conversation history
-                        self.session.storage.delete(lineChannelSecret+"_"+user_id)
+                        self.session.storage.delete(key_to_check)
 
                         # Send fixed reply
                         line_bot_api.reply_message(
@@ -95,7 +95,7 @@ class LineEndpoint(Endpoint):
                 conversation_id = response.get("conversation_id")
                 # print("conversation_id:"+conversation_id)
                 if conversation_id:
-                    self.session.storage.set(lineChannelSecret+"_"+user_id, conversation_id.encode('utf-8'))
+                    self.session.storage.set(key_to_check, conversation_id.encode('utf-8'))
                 line_bot_api.reply_message(
                     event.reply_token,
                     TextSendMessage(text=answer)
