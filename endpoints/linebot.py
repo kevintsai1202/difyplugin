@@ -71,6 +71,24 @@ class LineEndpoint(Endpoint):
                 }
                 if conversation_id is not None:
                     invoke_params['conversation_id'] = conversation_id.decode('utf-8')
+
+                    # Check for command in user message
+                    if user_message.lower() == '/clearconversationhistory':
+                        # Clear user conversation history
+                        self.session.storage.delete(lineChannelSecret+"_"+user_id)
+
+                        # Send fixed reply
+                        line_bot_api.reply_message(
+                            event.reply_token,
+                            TextSendMessage(text="SYSTEM: Session history in Dify cleared.")
+                        )
+
+                        # return without processing
+                        return Response(
+                            status=200,
+                            response="ok",
+                            content_type="text/plain",
+                        )
                 
                 response = self.session.app.chat.invoke(**invoke_params)
                 answer = response.get("answer")
