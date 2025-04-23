@@ -173,18 +173,6 @@ class LineEndpoint(Endpoint):
                 # Prepare Dify inputs for file attachment
                 dify_inputs = {
                     img_variable_name: [file_param],
-                    # {
-
-                    # "upload_file_id": file_param["upload_file_id"],
-                    # "type": "image",
-                    # "transfer_method": "local_file",
-                    # "id": file_param["upload_file_id"],
-                    # "name": "theimage.jpg",
-                    # "size": len(raw_bytes),
-                    # "extension": "jpg",
-                    # "mimetype": "image/jpeg",
-                    # }
-
                 }
                 logger.debug(f"dify_inputs: {dify_inputs}")
             except Exception as e:
@@ -207,53 +195,6 @@ class LineEndpoint(Endpoint):
                     'utf-8')
             response = self.session.app.chat.invoke(**invoke_params)
             logger.debug(f"handle_image: Dify invoke response: {response}")
-            answer = response.get("answer")
-            conversation_id = response.get("conversation_id")
-            if conversation_id:
-                self.session.storage.set(
-                    key_to_check, conversation_id.encode('utf-8'))
-            line_bot_api.reply_message(
-                event.reply_token,
-                TextSendMessage(text=answer)
-            )
-            return Response(
-                status=200,
-                response="ok",
-                content_type="text/plain",
-            )
-
-            logger.debug(
-                f"[LineEndpoint] handle_audio triggered. user_id={event.source.user_id}, message_id={event.message.id}")
-            user_id = event.source.user_id
-            message_id = event.message.id
-            try:
-                content = line_bot_api.get_message_content(message_id)
-                audio_bytes = content.content
-            except Exception as e:
-                logger.error(f"Error fetching audio content: {e}")
-                line_bot_api.reply_message(
-                    event.reply_token,
-                    TextSendMessage(
-                        text="[DEBUG] Failed to fetch audio content")
-                )
-                return
-            key_to_check = lineChannelSecret + "_" + user_id
-            conversation_id = None
-            try:
-                conversation_id = self.session.storage.get(key_to_check)
-            except Exception:
-                pass
-            invoke_params = {
-                "app_id": settings["app"]["app_id"],
-                "query": "Describe the audio",
-                # inputs parameter can be a dictionary with keys: user_id, user_name, user_external_id, user_external_id_type, user_data, context, files, nlp, task, task_input, task_data, task_options
-                "inputs": {"files": audio_bytes},
-                "response_mode": "blocking",
-            }
-            if conversation_id is not None:
-                invoke_params["conversation_id"] = conversation_id.decode(
-                    'utf-8')
-            response = self.session.app.chat.invoke(**invoke_params)
             answer = response.get("answer")
             conversation_id = response.get("conversation_id")
             if conversation_id:
