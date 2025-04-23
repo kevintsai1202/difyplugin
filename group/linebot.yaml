@@ -29,6 +29,54 @@ settings:
       zh_Hant: 請輸入Channel Access Token
       pt_BR: Por favor, insira seu Token de Acesso do Canal
       ja_JP: チャネルアクセストークンを入力してください
+  - name: dify_api_key
+    type: secret-input
+    required: false
+    label:
+      en_US: Dify API Key (for file upload)
+      zh_Hans: Dify API 密钥（用于文件上传）
+      zh_Hant: Dify API 金鑰（用於檔案上傳）
+      pt_BR: Chave de API Dify (para upload de arquivos)
+      ja_JP: Dify APIキー（ファイルアップロード用）
+    placeholder:
+      en_US: Please input your Dify API Key
+      zh_Hans: 请输入你的Dify API密钥
+      zh_Hant: 請輸入您的Dify API金鑰
+      pt_BR: Por favor, insira sua Chave de API Dify
+      ja_JP: Dify APIキーを入力してください
+  - name: img_variable_name
+    type: text-input
+    required: false
+    default: img
+    label:
+      en_US: Image Variable Name
+      zh_Hans: 图片变量名
+      zh_Hant: 圖片變量名
+      pt_BR: Nome da Variável de Imagem
+      ja_JP: イメージ変数名
+    placeholder:
+      en_US: Please input your Image Variable Name
+      zh_Hans: 请输入你的图片变量名
+      zh_Hant: 請輸入您的圖片變量名
+      pt_BR: Por favor, insira seu Nome da Variável de Imagem
+      ja_JP: イメージ変数名を入力してください
+  - name: img_prompt
+    type: text-input
+    required: false
+    default: Describe the image uploaded in files
+    label:
+      en_US: Image Prompt
+      zh_Hans: 图片提示词
+      zh_Hant: 圖片提示詞
+      pt_BR: Prompt de Imagem
+      ja_JP: イメージプロンプト
+    placeholder:
+      en_US: Please input your Image Prompt
+      zh_Hans: 请输入你的图片提示词
+      zh_Hant: 請輸入您的圖片提示詞
+      pt_BR: Por favor, insira seu Prompt de Imagem
+      ja_JP: イメージプロンプトを入力してください
+ 
   - name: app
     type: app-selector
     required: true
