@@ -69,11 +69,20 @@ class LineEndpoint(Endpoint):
                 err = traceback.format_exc()
                 # logger.debug(err)
 
-            try:
+            try:                
+                # 收集識別資訊
+                user_id = event.source.user_id
+                group_id = getattr(event.source, "group_id", None)
+                room_id = getattr(event.source, "room_id", None)
+                identify_inputs = {
+                    "user_id": user_id,
+                    "group_id": group_id,
+                    "room_id": room_id,
+                }
                 invoke_params = {
                     "app_id": settings["app"]["app_id"],
                     "query": user_message,
-                    "inputs": {},
+                    "inputs": identify_inputs,
                     "response_mode": "blocking"
                 }
                 if conversation_id is not None:
@@ -184,10 +193,21 @@ class LineEndpoint(Endpoint):
                 conversation_id = self.session.storage.get(key_to_check)
             except Exception:
                 pass
+            # 收集識別資訊
+            user_id = event.source.user_id
+            group_id = getattr(event.source, "group_id", None)
+            room_id = getattr(event.source, "room_id", None)
+            identify_inputs = {
+                "user_id": user_id,
+                "group_id": group_id,
+                "room_id": room_id,
+            }
+            # 合併圖片參數與識別資訊
+            merged_inputs = {**dify_inputs, **identify_inputs}
             invoke_params = {
                 "app_id": settings["app"]["app_id"],
                 "query": img_prompt,
-                "inputs": dify_inputs,
+                "inputs": merged_inputs,
                 "response_mode": "blocking",
             }
             if conversation_id is not None:
