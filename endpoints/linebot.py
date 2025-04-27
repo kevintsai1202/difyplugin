@@ -4,7 +4,7 @@ from dify_plugin import Endpoint
 from dify_plugin.invocations.file import UploadFileResponse
 from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError
-from linebot.models import MessageEvent, TextMessage, TextSendMessage, ImageMessage, AudioMessage
+from linebot.models import MessageEvent, TextMessage, TextSendMessage, ImageMessage, ImageSendMessage
 import traceback
 import hmac
 import hashlib
@@ -12,6 +12,7 @@ import base64
 import logging
 import requests
 import os
+import re
 
 logger = logging.getLogger(__name__)
 
@@ -106,10 +107,19 @@ class LineEndpoint(Endpoint):
                 if conversation_id:
                     self.session.storage.set(
                         key_to_check, conversation_id.encode('utf-8'))
-                line_bot_api.reply_message(
-                    event.reply_token,
-                    TextSendMessage(text=answer)
-                )
+                # Check for markdown image URLs in answer
+                image_urls = re.findall(r'!\[.*?\]\((.*?)\)', answer)
+                if image_urls:
+                    messages = [
+                        ImageSendMessage(original_content_url=url, preview_image_url=url)
+                        for url in image_urls
+                    ]
+                    line_bot_api.reply_message(event.reply_token, messages)
+                else:
+                    line_bot_api.reply_message(
+                        event.reply_token,
+                        TextSendMessage(text=answer)
+                    )
 
                 return Response(
                     status=200,
