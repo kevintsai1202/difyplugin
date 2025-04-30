@@ -30,7 +30,7 @@ resource:
       enabled: true
     storage:
       enabled: true
-      size: 1048576
+      size: 1048577
 plugins:
   endpoints:
     - group/linebot.yaml
