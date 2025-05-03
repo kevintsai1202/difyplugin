@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 class LineEndpoint(Endpoint):
     def _invoke(self, request: Request, values: Mapping, settings: Mapping) -> Response:
         """
-        Invokes the endpoint with the given request.
+        調用端點處理給定的請求。
         """
         if not request:
             return Response(status=200, response="ok")
@@ -58,8 +58,17 @@ class LineEndpoint(Endpoint):
         def handle_message(event):
             # Line 傳來的 Message
             user_id = event.source.user_id
+            group_id = getattr(event.source, "group_id", None)
+            room_id = getattr(event.source, "room_id", None)
             user_message = event.message.text
-            key_to_check = lineChannelSecret+"_"+user_id
+            # Set key_to_check based on available identifiers
+            if group_id is not None and group_id:
+                key_to_check = lineChannelSecret+"_"+group_id
+            elif room_id is not None and room_id:
+                key_to_check = lineChannelSecret+"_"+room_id
+            else:
+                key_to_check = lineChannelSecret+"_"+user_id
+            # logger.debug(f"key_to_check: {key_to_check}")
             conversation_id = None
             # logger.debug("user_id:"+user_id)
             # logger.debug("user_message:"+user_message)
@@ -70,11 +79,9 @@ class LineEndpoint(Endpoint):
                 err = traceback.format_exc()
                 # logger.debug(err)
 
-            try:                
+            try:
                 # 收集識別資訊
-                user_id = event.source.user_id
-                group_id = getattr(event.source, "group_id", None)
-                room_id = getattr(event.source, "room_id", None)
+
                 identify_inputs = {
                     "user_id": user_id,
                     "group_id": group_id,
@@ -90,19 +97,19 @@ class LineEndpoint(Endpoint):
                     invoke_params['conversation_id'] = conversation_id.decode(
                         'utf-8')
 
-                    # Check for command in user message
+                    # 檢查用戶訊息中的命令
                     if user_message.lower() == '/clearconversationhistory':
-                        # Clear user conversation history
+                        # 清除用戶對話歷史
                         self.session.storage.delete(key_to_check)
 
-                        # Send fixed reply
+                        # 發送固定回覆
                         line_bot_api.reply_message(
                             event.reply_token,
                             TextSendMessage(
                                 text="SYSTEM: Session history in Dify cleared.")
                         )
 
-                        # return without processing
+                        # 不進行處理直接返回
                         return Response(
                             status=200,
                             response="ok",
@@ -116,11 +123,12 @@ class LineEndpoint(Endpoint):
                 if conversation_id:
                     self.session.storage.set(
                         key_to_check, conversation_id.encode('utf-8'))
-                # Check for markdown image URLs in answer
+                # 檢查回答中的 markdown 圖片 URL
                 image_urls = re.findall(r'!\[.*?\]\((.*?)\)', answer)
                 if image_urls:
                     messages = [
-                        ImageSendMessage(original_content_url=url, preview_image_url=url)
+                        ImageSendMessage(
+                            original_content_url=url, preview_image_url=url)
                         for url in image_urls
                     ]
                     line_bot_api.reply_message(event.reply_token, messages)
@@ -150,12 +158,14 @@ class LineEndpoint(Endpoint):
             logger.debug(
                 f"[LineEndpoint] handle_image triggered. user_id={event.source.user_id}, message_id={event.message.id}")
             user_id = event.source.user_id
+            group_id = getattr(event.source, "group_id", None)
+            room_id = getattr(event.source, "room_id", None)
             message_id = event.message.id
             img_variable_name = settings.get('img_variable_name')
             img_prompt = settings.get('img_prompt')
             dify_api_key = settings.get('dify_api_key')
 
-            # Stop if any of the required settings are missing
+            # 如果缺少任何必要的設置則停止
             if not (img_variable_name and img_prompt and dify_api_key):
                 return Response(
                     status=200,
@@ -166,8 +176,8 @@ class LineEndpoint(Endpoint):
                 content = line_bot_api.get_message_content(message_id)
                 raw_bytes = content.content
                 logger.debug(f"handle_image: retrieved {len(raw_bytes)} bytes")
-                # upload file to Dify and prepare parameter
-                # Initialize the FileUploader and upload via session
+                # 上傳文件到 Dify 並準備參數
+                # 初始化 FileUploader 並通過 session 上傳
                 uploader = FileUploader(
                     session=self.session, dify_api_key=dify_api_key)
                 upload_resp = uploader.upload_file_via_api(
@@ -189,7 +199,7 @@ class LineEndpoint(Endpoint):
                 file_param["type"] = "image"
                 file_param["transfer_method"] = "local_file"
                 logger.debug(f"file_param: {file_param}")
-                # Prepare Dify inputs for file attachment
+                # 準備 Dify 輸入用於文件附件
                 dify_inputs = {
                     img_variable_name: [file_param],
                 }
@@ -197,16 +207,20 @@ class LineEndpoint(Endpoint):
             except Exception as e:
                 logger.error(f"Error fetching image content: {e}")
                 return
-            key_to_check = lineChannelSecret + "_" + user_id
+            # Set key_to_check based on available identifiers
+            if group_id is not None and group_id:
+                key_to_check = lineChannelSecret+"_"+group_id
+            elif room_id is not None and room_id:
+                key_to_check = lineChannelSecret+"_"+room_id
+            else:
+                key_to_check = lineChannelSecret+"_"+user_id
+            # logger.debug(f"key_to_check: {key_to_check}")
             conversation_id = None
             try:
                 conversation_id = self.session.storage.get(key_to_check)
             except Exception:
                 pass
             # 收集識別資訊
-            user_id = event.source.user_id
-            group_id = getattr(event.source, "group_id", None)
-            room_id = getattr(event.source, "room_id", None)
             identify_inputs = {
                 "user_id": user_id,
                 "group_id": group_id,
