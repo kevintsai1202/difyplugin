@@ -1,4 +1,4 @@
 dify_plugin~=0.2.1
 Werkzeug==3.0.3
-line-bot-sdk~3.17.1
+line-bot-sdk~=3.17.1
 markdown-it-py~=3.0.0
