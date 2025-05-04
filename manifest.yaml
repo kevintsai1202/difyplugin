@@ -1,4 +1,4 @@
-version: 0.0.4
+version: 0.0.5
 type: plugin
 author: kevintsai
 name: linebot
@@ -35,7 +35,7 @@ plugins:
   endpoints:
     - group/linebot.yaml
 meta:
-  version: 0.0.4
+  version: 0.0.5
   arch:
     - amd64
     - arm64

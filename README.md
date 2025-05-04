@@ -1,9 +1,15 @@
 # Line Bot Plugin Integration Guide
 Author: @kevintsai1202 (https://github.com/kevintsai1202/difyplugin.git)
-Version: 0.0.4
+Version: 0.0.5
 Type: extension
 
 ## What's Changed
+# 0.0.5
+  1. Fix/New Feature: When group_id (LINE group chat), room_id (chat room) exist, Session uses group_id or room_id to save conversation_id. The effect is that group chats on Dify will maintain the same conversation. thanks to [@ryantsai](https://github.com/ryantsai]
+  2. New Feature: When the message contains markdown, send to LINE as FlexMessage. Can be adjusted in Plugin parameters, default is off. thanks to [@ryantsai](https://github.com/ryantsai]
+  3. New Feature: Image upload uses Dify API URL parameterization, supports community edition scenarios. thanks to [@ryantsai](https://github.com/ryantsai]
+
+# 0.0.4
   1. Add the /clearconversationhistory command, thanks to [@ryantsai](https://github.com/ryantsai]
     When a user enters it on LINE, it will clear the session storage, and the next message sent to Dify will start a brand-new, clean session.
   2. Image message handling, thanks to [@ryantsai](https://github.com/ryantsai]
@@ -39,7 +45,7 @@ Follow these steps to install and configure the Line Bot plugin:
   - Obtain the API Key for the Dify workflow.(option)
   - Set the image variable, and ensure that the workflow also configures the same file variable.
   - Select a Chat Workflow. 
-  <img src="./_assets/2025-04-29 16 34 55.png" width="600" />
+  <img src="./_assets/440135816-e30b5969-f51f-4afa-aaeb-e79cf5e2f197.png" width="600" />
   <img src="./_assets/2025-04-29 16 33 49.png" width="600" />
   <img src="./_assets/2025-04-29 16 36 50.png" width="600" />
   <img src="./_assets/2025-04-29 16 37 05.png" width="600" />
@@ -67,3 +73,6 @@ Follow these steps to install and configure the Line Bot plugin:
   <img src="./_assets/437889599-42f6c682-3705-4e83-b00b-bcee18a5ec59.png" width="600" />
 
   <a href="https://github.com/user-attachments/files/19927343/LinebotImageChatSample.zip">LinebotImageChatSample.zip</a>
+
+  FlexMessage
+   <img src="./_assets/440135990-6a4e05b3-9679-445e-bbc6-9acfd413a026.png" width="600" />

@@ -33,17 +33,33 @@ settings:
     type: secret-input
     required: false
     label:
-      en_US: Dify API Key (for file upload)
-      zh_Hans: Dify API 密钥（用于文件上传）
-      zh_Hant: Dify API 金鑰（用於檔案上傳）
+      en_US: Dify API Key (for image recognition upload)
+      zh_Hans: Dify API 密钥（用于图片识别上传）
+      zh_Hant: Dify API 金鑰（用於圖片識別上傳）
       pt_BR: Chave de API Dify (para upload de arquivos)
-      ja_JP: Dify APIキー（ファイルアップロード用）
+      ja_JP: Dify APIキー（画像認識アップロード用）
     placeholder:
       en_US: Please input your Dify API Key
       zh_Hans: 请输入你的Dify API密钥
       zh_Hant: 請輸入您的Dify API金鑰
       pt_BR: Por favor, insira sua Chave de API Dify
       ja_JP: Dify APIキーを入力してください
+  - name: dify_api_url
+    type: text-input
+    required: false
+    default: "https://api.dify.ai/v1"
+    label:
+      en_US: Dify API URL
+      zh_Hans: Dify API 地址
+      zh_Hant: Dify API 網址
+      pt_BR: URL da API Dify
+      ja_JP: Dify API URL
+    placeholder:
+      en_US: Please input your Dify API URL
+      zh_Hans: 请输入你的Dify API地址
+      zh_Hant: 請輸入您的Dify API網址
+      pt_BR: Por favor, insira sua URL da API Dify
+      ja_JP: Dify API URLを入力してください
   - name: img_variable_name
     type: text-input
     required: false
@@ -76,7 +92,23 @@ settings:
       zh_Hant: 請輸入您的圖片提示詞
       pt_BR: Por favor, insira seu Prompt de Imagem
       ja_JP: イメージプロンプトを入力してください
- 
+  - name: mdtoflex
+    type: boolean
+    required: false
+    default: false
+    label:
+      en_US: Markdown to FlexMessage
+      zh_Hans: Markdown转FlexMessage
+      zh_Hant: Markdown轉FlexMessage
+      pt_BR: Markdown para FlexMessage
+      ja_JP: マークダウンからFlexMessageへ
+    placeholder:
+      en_US: Enable Markdown to FlexMessage conversion
+      zh_Hans: 启用Markdown转FlexMessage
+      zh_Hant: 啟用Markdown轉FlexMessage
+      pt_BR: Habilitar conversão de Markdown para FlexMessage
+      ja_JP: MarkdownからFlexMessageへの変換を有効にする
+
   - name: app
     type: app-selector
     required: true
