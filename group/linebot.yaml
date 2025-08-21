@@ -109,6 +109,102 @@ settings:
       pt_BR: Habilitar conversão de Markdown para FlexMessage
       ja_JP: MarkdownからFlexMessageへの変換を有効にする
 
+  - name: reset_command
+    type: text-input
+    required: false
+    default: "reset"
+    label:
+      en_US: "Reset Command (e.g., /reset)"
+      zh_Hans: "重置命令 (例如 /reset)"
+      zh_Hant: "重置指令 (例如 /reset)"
+      pt_BR: "Comando de Reset (e.g., /reset)"
+      ja_JP: "リセットコマンド (例: /reset)"
+    placeholder:
+      en_US: "e.g., 'cleanup'. Min 5 chars."
+      zh_Hans: "例如 'cleanup'。最少5个字符。"
+      zh_Hant: "例如 'cleanup'。最少5個字元。"
+      pt_BR: "e.g., 'cleanup'. Mínimo 5 caracteres."
+      ja_JP: "例: 'cleanup'。5文字以上。"
+  - name: reset_message
+    type: text-input
+    required: false
+    default: "SYSTEM: Session history in Dify cleared."
+    label:
+      en_US: Reset Success Message
+      zh_Hans: 重置成功消息
+      zh_Hant: 重置成功訊息
+      pt_BR: Mensagem de Sucesso de Reset
+      ja_JP: リセット成功メッセージ
+    placeholder:
+      en_US: The reply message after clearing the history successfully.
+      zh_Hans: 成功清除历史后的回复消息。
+      zh_Hant: 成功清除歷史後的回覆訊息。
+      pt_BR: A mensagem de resposta após limpar o histórico com sucesso.
+      ja_JP: 履歴を正常にクリアした後の返信メッセージ。
+  - name: error_message
+    type: text-input
+    required: false
+    default: "Sorry, I encountered a problem, please try again later."
+    label:
+      en_US: Error Message
+      zh_Hans: 错误消息
+      zh_Hant: 錯誤訊息
+      pt_BR: Mensagem de Erro
+      ja_JP: エラーメッセージ
+    placeholder:
+      en_US: The reply message when an unexpected error occurs.
+      zh_Hans: 发生意外错误时的回复消息。
+      zh_Hant: 發生意外錯誤時的回覆訊息。
+      pt_BR: A mensagem de resposta quando ocorre um erro inesperado.
+      ja_JP: 予期せぬエラーが発生した場合の返信メッセージ。
+  - name: help_command
+    type: text-input
+    required: false
+    default: "help"
+    label:
+      en_US: "Help Command (e.g., /help)"
+      zh_Hans: "帮助命令 (例如 /help)"
+      zh_Hant: "幫助指令 (例如 /help)"
+      pt_BR: "Comando de Ajuda (e.g., /help)"
+      ja_JP: "ヘルプコマンド (例: /help)"
+    placeholder:
+      en_US: "Command to show a help message (without '/')"
+      zh_Hans: "用于显示帮助信息的命令（不含“/”）"
+      zh_Hant: "用於顯示幫助訊息的指令（不含「/」）"
+      pt_BR: "Comando para exibir uma mensagem de ajuda (sem '/')"
+      ja_JP: "ヘルプメッセージを表示するコマンド（「/」なし）"
+  - name: help_message
+    type: text-input
+    required: false
+    default: |
+      你好！這是一個由 Dify 平台驅動的 AI 助理。
+      你可以這樣與我互動：
+
+      [一般對話]
+      - 在一對一聊天中，可以直接對我提問。
+      - 在群組中，請務必用「@我」來提問喔！
+
+      [支援的訊息]
+      - 我能理解文字和圖片訊息。
+      - 暫時還看不懂貼圖、語音或影片。
+
+      [可用指令]
+      - /help: 顯示這則說明。
+      - /reset: 清除我們之間的對話歷史，開啟一個全新的話題。
+
+      請開始對我提問吧！
+    label:
+      en_US: Help Message
+      zh_Hans: 帮助信息
+      zh_Hant: 幫助訊息
+      pt_BR: Mensagem de Ajuda
+      ja_JP: ヘルプメッセージ
+    placeholder:
+      en_US: The content of the help message.
+      zh_Hans: 帮助信息的内容。
+      zh_Hant: 幫助訊息的內容。
+      pt_BR: O conteúdo da mensagem de ajuda.
+      ja_JP: ヘルプメッセージの内容。
   - name: app
     type: app-selector
     required: true
