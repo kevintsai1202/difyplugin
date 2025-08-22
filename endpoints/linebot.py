@@ -258,6 +258,27 @@ class LineEndpoint(Endpoint):
                 if not (img_variable_name and img_prompt and dify_api_key):
                     return
 
+                # 在群組或聊天室中，檢查圖片是否回覆給 Bot
+                if group_id or room_id:
+                    # 檢查是否為回覆訊息
+                    reply_message = getattr(event.message, 'reply_message', None)
+                    if reply_message:
+                        # 如果是回覆訊息，檢查是否回覆給 Bot 自己
+                        if not self.bot_user_id:
+                            bot_info = line_bot_api.get_bot_info()
+                            self.bot_user_id = bot_info.user_id
+                            logger.info(f"Successfully fetched bot user ID: {self.bot_user_id}")
+                        
+                        # 如果不是回覆給 Bot，則忽略
+                        if reply_message.user_id != self.bot_user_id:
+                            logger.info(f"Image is a reply to another user, ignoring. Reply to: {reply_message.user_id}")
+                            return
+                    else:
+                        # 如果不是回覆訊息，檢查是否有 @ 提及（圖片訊息本身不能包含提及，但可能在同一則訊息中）
+                        # 由於圖片訊息無法包含文字，這裡直接忽略非回覆的圖片
+                        logger.info("Image in group/room is not a reply to bot, ignoring")
+                        return
+
                 content = line_bot_api.get_message_content(message_id)
                 raw_bytes = content.content
                 logger.debug(f"handle_image: retrieved {len(raw_bytes)} bytes")
