@@ -95,22 +95,7 @@ class LineEndpoint(Endpoint):
                 return
             
             elif user_message.lower() == f"/{help_command}":
-                default_help_msg = """你好！這是一個由 Dify 平台驅動的 AI 助理。
-你可以這樣與我互動：
-
-[一般對話]
-- 在一對一聊天中，可以直接對我提問。
-- 在群組中，請務必用「@我」來提問喔！
-
-[支援的訊息]
-- 我能理解文字和圖片訊息。
-- 暫時還看不懂貼圖、語音或影片。
-
-[可用指令]
-- /help: 顯示這則說明。
-- /reset: 清除我們之間的對話歷史，開啟一個全新的話題。
-
-請開始對我提問吧！"""
+                default_help_msg = "Hello! I'm an AI assistant powered by Dify platform. In 1-on-1 chats, ask me directly. In groups, please @mention me. I support text and image messages. Use /help for this info, /reset to clear history."
                 help_msg = settings.get('help_message') or default_help_msg
                 line_bot_api.reply_message(
                     event.reply_token,
