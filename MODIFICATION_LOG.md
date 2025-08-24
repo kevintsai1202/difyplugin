@@ -60,6 +60,23 @@
 
 ---
 
+## 2025-08-22: 圖片處理除錯增強
+
+### 主要改進
+1. **詳細除錯日誌**
+   - 添加完整的圖片處理流程日誌
+   - 包含所有關鍵參數和步驟的記錄
+   - 便於問題定位和排查
+
+2. **錯誤處理改善**
+   - 增強異常捕獲和日誌記錄
+   - 提供更清楚的錯誤資訊
+
+### 修改的檔案
+- `endpoints/linebot.py` - 增強除錯功能
+
+---
+
 ## 2025-08-20: 程式碼結構優化
 
 ### 主要改進
@@ -72,6 +89,20 @@
 - `utils/__init__.py`
 - `utils/file_uploader.py`
 - `utils/flex_formatter.py`
+
+---
+
+## 2025-08-23: Git Remote 設定優化
+
+### 主要改進
+1. **調整 Git Remote 設定**
+   - 將 `origin` 改為指向自己的 fork
+   - 將原始專案設為 `upstream`
+   - 符合開源專案協作慣例
+
+### 修改內容
+- `git remote rename origin upstream`
+- `git remote rename myfork origin`
 
 ---
 

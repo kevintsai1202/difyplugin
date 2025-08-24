@@ -244,7 +244,7 @@ class LineEndpoint(Endpoint):
         @handler.add(MessageEvent, message=ImageMessage)
         def handle_image(event):
             try:
-                logger.debug(
+                logger.info(
                     f"[LineEndpoint] handle_image triggered. user_id={event.source.user_id}, message_id={event.message.id}")
                 user_id = event.source.user_id
                 group_id = getattr(event.source, "group_id", None)
@@ -253,48 +253,83 @@ class LineEndpoint(Endpoint):
                 img_variable_name = settings.get('img_variable_name')
                 img_prompt = settings.get('img_prompt')
                 dify_api_key = settings.get('dify_api_key')
+                dify_api_url = settings.get('dify_api_url')
+
+                # 詳細的除錯資訊
+                logger.info(f"Image processing details:")
+                logger.info(f"  - User ID: {user_id}")
+                logger.info(f"  - Group ID: {group_id}")
+                logger.info(f"  - Room ID: {room_id}")
+                logger.info(f"  - Message ID: {message_id}")
+                logger.info(f"  - Image variable name: {img_variable_name}")
+                logger.info(f"  - Image prompt: {img_prompt}")
+                logger.info(f"  - Dify API URL: {dify_api_url}")
+                logger.info(f"  - Dify API key exists: {bool(dify_api_key)}")
 
                 # 如果缺少任何必要的設置則停止
                 if not (img_variable_name and img_prompt and dify_api_key):
+                    logger.warning("Missing required settings for image processing")
                     return
 
                 # 在群組或聊天室中，檢查圖片是否回覆給 Bot
                 if group_id or room_id:
+                    logger.info("Processing image in group/room mode")
+                    
                     # 檢查是否為回覆訊息
                     reply_message = getattr(event.message, 'reply_message', None)
+                    logger.info(f"Reply message: {reply_message}")
+                    
                     if reply_message:
+                        logger.info("Image is a reply message")
+                        
                         # 如果是回覆訊息，檢查是否回覆給 Bot 自己
                         if not self.bot_user_id:
-                            bot_info = line_bot_api.get_bot_info()
-                            self.bot_user_id = bot_info.user_id
-                            logger.info(f"Successfully fetched bot user ID: {self.bot_user_id}")
+                            try:
+                                bot_info = line_bot_api.get_bot_info()
+                                self.bot_user_id = bot_info.user_id
+                                logger.info(f"Successfully fetched bot user ID: {self.bot_user_id}")
+                            except Exception as e:
+                                logger.error(f"Failed to get bot info: {e}")
+                                return
                         
-                        # 如果不是回覆給 Bot，則忽略
-                        if reply_message.user_id != self.bot_user_id:
-                            logger.info(f"Image is a reply to another user, ignoring. Reply to: {reply_message.user_id}")
+                        # 檢查是否回覆給 Bot
+                        if reply_message.user_id == self.bot_user_id:
+                            logger.info("Image is replied to bot, processing...")
+                        else:
+                            logger.info(f"Image is replied to another user (ID: {reply_message.user_id}), ignoring")
                             return
                     else:
-                        # 如果不是回覆訊息，檢查是否有 @ 提及（圖片訊息本身不能包含提及，但可能在同一則訊息中）
-                        # 由於圖片訊息無法包含文字，這裡直接忽略非回覆的圖片
-                        logger.info("Image in group/room is not a reply to bot, ignoring")
-                        return
+                        # 如果不是回覆訊息，在群組中直接處理
+                        logger.info("Image is not a reply, but processing in group/room mode")
+                        # 注意：這裡可以根據需求決定是否要處理非回覆的圖片
 
+                # 下載圖片內容
+                logger.info("Downloading image content from LINE...")
                 content = line_bot_api.get_message_content(message_id)
                 raw_bytes = content.content
-                logger.debug(f"handle_image: retrieved {len(raw_bytes)} bytes")
+                logger.info(f"Downloaded {len(raw_bytes)} bytes of image data")
                 
+                # 初始化檔案上傳器
                 if not self._file_uploader:
+                    logger.info("Initializing FileUploader...")
                     self._file_uploader = FileUploader(session=self.session)
                 
+                # 設定 API 金鑰和 URL
                 self._file_uploader.dify_api_key = dify_api_key
-                self._file_uploader.dify_base_url = settings.get('dify_api_url')
+                self._file_uploader.dify_base_url = dify_api_url or "https://api.dify.ai/v1"
+                logger.info(f"FileUploader configured with API URL: {self._file_uploader.dify_base_url}")
 
+                # 上傳圖片到 Dify
+                logger.info("Uploading image to Dify...")
                 upload_resp = self._file_uploader.upload_file_via_api(
                     f"{message_id}.jpg", raw_bytes, "image/jpeg"
                 )
+                
                 if not upload_resp:
-                    logger.warning("Image upload via API failed.")
+                    logger.error("Image upload to Dify failed!")
                     return
+                    
+                logger.info(f"Image uploaded successfully. File ID: {upload_resp.get('id')}")
 
                 file_param = {
                     "upload_file_id": upload_resp["id"],
@@ -335,18 +370,32 @@ class LineEndpoint(Endpoint):
                 if conversation_id is not None:
                     invoke_params["conversation_id"] = conversation_id.decode('utf-8')
                 
+                # 呼叫 Dify API
+                logger.info("Invoking Dify chat API...")
+                logger.info(f"Invoke parameters: {invoke_params}")
+                
                 response = self.session.app.chat.invoke(**invoke_params)
                 answer = response.get("answer")
                 conversation_id = response.get("conversation_id")
                 
+                logger.info(f"Dify response received. Answer length: {len(answer) if answer else 0}")
+                logger.info(f"Conversation ID: {conversation_id}")
+                
                 if conversation_id:
                     self.session.storage.set(
                         key_to_check, conversation_id.encode('utf-8'))
+                    logger.info("Conversation ID stored successfully")
                 
-                line_bot_api.reply_message(
-                    event.reply_token,
-                    TextSendMessage(text=answer)
-                )
+                # 回覆使用者
+                if answer:
+                    logger.info("Sending response to user...")
+                    line_bot_api.reply_message(
+                        event.reply_token,
+                        TextSendMessage(text=answer)
+                    )
+                    logger.info("Response sent successfully")
+                else:
+                    logger.warning("No answer received from Dify")
             except Exception as e:
                 err = traceback.format_exc()
                 logger.error(f"An unexpected error occurred in handle_image: {err}")
