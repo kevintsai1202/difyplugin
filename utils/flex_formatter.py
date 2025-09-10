@@ -12,6 +12,63 @@ class MdFlexFormatHelper:
     def __init__(self):
         self.md = MarkdownIt()
         logger.debug("MdFlexFormatHelper initialized")
+    
+    def _process_bold_text(self, text: str) -> dict:
+        """Process bold text in content and return flex message text component"""
+        # Check if there's any bold text
+        bold_pattern = r'\*\*(.*?)\*\*|__(.*?)__'
+        bold_matches = list(re.finditer(bold_pattern, text))
+        
+        if not bold_matches:
+            # No bold text, return simple text component
+            return {
+                "type": "text",
+                "text": text,
+                "wrap": True,
+                "size": "md"
+            }
+        
+        # Process bold text with spans
+        spans = []
+        last_end = 0
+        
+        for match in bold_matches:
+            bold_text = match.group(1) if match.group(1) else match.group(2)
+            start = match.start()
+            end = match.end()
+            
+            # Add non-bold text before this match
+            if start > last_end:
+                spans.append({
+                    "type": "span",
+                    "text": text[last_end:start],
+                    "size": "md"
+                })
+            
+            # Add bold text
+            spans.append({
+                "type": "span",
+                "text": bold_text,
+                "weight": "bold",
+                "size": "md"
+            })
+            
+            last_end = end
+        
+        # Add any remaining text
+        if last_end < len(text):
+            spans.append({
+                "type": "span",
+                "text": text[last_end:],
+                "size": "md"
+            })
+        
+        return {
+            "type": "text",
+            "wrap": True,
+            "size": "md",
+            "contents": spans
+        }
 
     def md_to_flex(self, md_text: str) -> dict:
         """Convert markdown text to a LINE Flex Message JSON structure
