@@ -24,6 +24,18 @@ Type: extension
 ## Plugin Overview
 The Line Bot plugin integrates the Dify chat workflow application with the Line Official Account Messaging API. It enables users to interact with AI through a Line Official Account. The plugin only processes message reception and responses; it does not store any user information.
 
+## Features
+- Support for core LINE Bot functionalities.
+- Simplified plugin configuration with essential features.
+- Markdown to FlexMessage conversion with improved parsing.
+- Automatic detection and rendering of Markdown formatting.
+- Enhanced display for long content with scrolling strategies.
+- Reliable and complete FlexMessage rendering without truncation.
+- Integration of MdFlexFormatHelper for table and heading support.
+- Optimized bold text parsing in headings and paragraphs to eliminate residual Markdown symbols (**).
+- Unified markdown bold processing function to correctly render FlexMessage spans.
+- Improved handling of complex Markdown in FlexMessage for more consistent display.
+
 ## Setup Steps
 Follow these steps to install and configure the Line Bot plugin:
 1. Create a Provider and Messaging API Channel
