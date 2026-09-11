@@ -1,0 +1,5 @@
+path: "/img/<token>"
+method: "GET"
+extra:
+  python:
+    source: "endpoints/image_serve.py"

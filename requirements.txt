@@ -1,4 +1,7 @@
-dify_plugin~=0.2.1
-Werkzeug==3.0.3
-line-bot-sdk~=3.17.1
+# Dify 外掛 SDK；0.7.x 起才允許 Werkzeug 3.1.x（0.2~0.6 鎖 ~=3.0.3）
+dify_plugin~=0.7.4
+# 修補 safe_join Windows 裝置名漏洞（CVE-2026-27199 / CVE-2026-21860），需 >=3.1.6
+Werkzeug>=3.1.6,<3.2
+# LINE Messaging API 直接以 requests 呼叫（dify_plugin 已相依 requests）
+# Markdown 解析，用於 Markdown 轉 FlexMessage
 markdown-it-py~=3.0.0

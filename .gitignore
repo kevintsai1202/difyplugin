@@ -169,3 +169,7 @@ cython_debug/
 
 # Vscode
 .vscode/
+
+# 遠端除錯輸出
+remote_debug.log*
+exit.code

@@ -3,7 +3,7 @@ name: Auto Create PR on Main Push
 
 on:
   push:
-    branches: [ main ]  # Trigger on push to main
+    branches: [ main, master ]  # Trigger on push to main or master
 
 jobs:
   create_pr: # Renamed job for clarity
@@ -24,7 +24,7 @@ jobs:
           cd $RUNNER_TEMP/bin
 
           # Download CLI tool
-          wget https://github.com/langgenius/dify-plugin-daemon/releases/download/0.0.6/dify-plugin-linux-amd64
+          wget https://github.com/langgenius/dify-plugin-daemon/releases/latest/download/dify-plugin-linux-amd64
           chmod +x dify-plugin-linux-amd64
 
           # Show download location and file

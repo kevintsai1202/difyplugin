@@ -33,13 +33,13 @@ settings:
     type: secret-input
     required: false
     label:
-      en_US: Dify API Key (for image recognition upload)
-      zh_Hans: Dify API 密钥（用于图片识别上传）
-      zh_Hant: Dify API 金鑰（用於圖片識別上傳）
-      pt_BR: Chave de API Dify (para upload de arquivos)
-      ja_JP: Dify APIキー（画像認識アップロード用）
+      en_US: Dify API Key (optional, store images inside Dify)
+      zh_Hans: Dify API 密钥（可选，将图片存入 Dify）
+      zh_Hant: Dify API 金鑰（選填，將圖片存入 Dify）
+      pt_BR: Chave de API Dify (opcional, guarda imagens no Dify)
+      ja_JP: Dify APIキー（任意、画像を Dify に保存）
     placeholder:
-      en_US: Please input your Dify API Key
+      en_US: Leave empty unless you need images uploaded into Dify; must be the selected App's key
       zh_Hans: 请输入你的Dify API密钥
       zh_Hant: 請輸入您的Dify API金鑰
       pt_BR: Por favor, insira sua Chave de API Dify
@@ -109,6 +109,70 @@ settings:
       pt_BR: Habilitar conversão de Markdown para FlexMessage
       ja_JP: MarkdownからFlexMessageへの変換を有効にする
 
+  - name: debug_mode
+    type: boolean
+    required: false
+    default: false
+    label:
+      en_US: Debug Mode
+      zh_Hans: 调试模式
+      zh_Hant: 除錯模式
+      pt_BR: Modo de Depuração
+      ja_JP: デバッグモード
+    placeholder:
+      en_US: Send error details back to the LINE user (for troubleshooting only)
+      zh_Hans: 将错误详情回传给 LINE 用户（仅供排查）
+      zh_Hant: 將錯誤細節回傳給 LINE 使用者（僅供排查）
+      pt_BR: Enviar detalhes de erro ao usuário do LINE (apenas para diagnóstico)
+      ja_JP: エラー詳細を LINE ユーザーに返す（トラブルシューティング用）
+  - name: welcome_message
+    type: text-input
+    required: false
+    label:
+      en_US: Welcome Message
+      zh_Hans: 欢迎消息
+      zh_Hant: 歡迎訊息
+      pt_BR: Mensagem de Boas-vindas
+      ja_JP: ウェルカムメッセージ
+    placeholder:
+      en_US: Sent when a user adds the official account (leave empty to disable)
+      zh_Hans: 用户加好友时发送（留空则不发送）
+      zh_Hant: 使用者加入好友時發送（留空則不發送）
+      pt_BR: Enviada quando o usuário adiciona a conta (vazio para desativar)
+      ja_JP: 友だち追加時に送信（空欄で無効）
+  - name: pass_display_name
+    type: boolean
+    required: false
+    default: true
+    label:
+      en_US: Pass LINE Display Name to Dify
+      zh_Hans: 传递 LINE 显示名称给 Dify
+      zh_Hant: 傳遞 LINE 顯示名稱給 Dify
+      pt_BR: Enviar nome de exibição do LINE ao Dify
+      ja_JP: LINE 表示名を Dify に渡す
+    placeholder:
+      en_US: Adds the user's display name as a Dify input variable
+      zh_Hans: 将用户显示名称作为 Dify 输入变量
+      zh_Hant: 將使用者顯示名稱作為 Dify 輸入變數
+      pt_BR: Adiciona o nome de exibição como variável de entrada do Dify
+      ja_JP: ユーザーの表示名を Dify の入力変数として追加
+  - name: display_name_variable
+    type: text-input
+    required: false
+    default: displayName
+    label:
+      en_US: Display Name Variable
+      zh_Hans: 显示名称变量名
+      zh_Hant: 顯示名稱變數名
+      pt_BR: Variável do Nome de Exibição
+      ja_JP: 表示名の変数名
+    placeholder:
+      en_US: Dify input variable name for the display name
+      zh_Hans: 显示名称对应的 Dify 输入变量名
+      zh_Hant: 顯示名稱對應的 Dify 輸入變數名
+      pt_BR: Nome da variável de entrada do Dify para o nome de exibição
+      ja_JP: 表示名に対応する Dify 入力変数名
+
   - name: app
     type: app-selector
     required: true
@@ -126,3 +190,4 @@ settings:
       ja_JP: あなたが Line メッセージに回答するために使用するアプリ
 endpoints:
   - endpoints/linebot.yaml
+  - endpoints/linebot_image.yaml
